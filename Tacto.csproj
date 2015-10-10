@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5D1D996B-63A2-457F-AC6D-4CF453C2432F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Tacto</RootNamespace>
+    <AssemblyName>Tacto</AssemblyName>
+    <StartupObject>Tacto.MainClass</StartupObject>
+    <CodePage>65001</CodePage>
+    <ApplicationIcon>pixmaps\card-file-icon.ico</ApplicationIcon>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DocumentationFile>bin\Debug\Tacto.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="GtkUtil">
+      <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="pixmaps\card-file-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Gui\AssemblyInfo.cs" />
+    <Compile Include="Gui\MainWindow.cs" />
+    <Compile Include="Core\AppInfo.cs" />
+    <Compile Include="Gui\Main.cs" />
+    <Compile Include="Core\Person.cs" />
+    <Compile Include="Core\PersonsList.cs" />
+    <Compile Include="Gui\DlgEditPerson.cs" />
+    <Compile Include="Core\Category.cs" />
+    <Compile Include="Core\CategoryList.cs" />
+    <Compile Include="Core\AgendaSystem.cs" />
+    <Compile Include="Gui\DlgCategories.cs" />
+    <Compile Include="Gui\ChooseConversionFormat.cs" />
+    <Compile Include="gtk-gui\Tacto.Gui.MainWindow.cs" />
+    <Compile Include="gtk-gui\Tacto.Gui.ChooseConversionFormat.cs" />
+    <Compile Include="gtk-gui\Tacto.Gui.DlgCategories.cs" />
+    <Compile Include="gtk-gui\Tacto.Gui.DlgEditPerson.cs" />
+    <Compile Include="Core\CsvManager.cs" />
+    <Compile Include="Core\VcfManager.cs" />
+    <Compile Include="Core\FileFormatManager.cs" />
+    <Compile Include="Core\HtmlManager.cs" />
+    <Compile Include="Core\EmailConnectionManager.cs" />
+    <Compile Include="Core\ConnectionManager.cs" />
+    <Compile Include="Core\HttpConnectionManager.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="Gui\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo generateGettext="False" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

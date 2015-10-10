@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tacto", "Tacto.csproj", "{5D1D996B-63A2-457F-AC6D-4CF453C2432F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TactoTests", "TactoTests\TactoTests.csproj", "{E3F4DE3A-AB65-4DDB-B2F0-A4333F016031}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5D1D996B-63A2-457F-AC6D-4CF453C2432F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D1D996B-63A2-457F-AC6D-4CF453C2432F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D1D996B-63A2-457F-AC6D-4CF453C2432F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D1D996B-63A2-457F-AC6D-4CF453C2432F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F4DE3A-AB65-4DDB-B2F0-A4333F016031}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F4DE3A-AB65-4DDB-B2F0-A4333F016031}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F4DE3A-AB65-4DDB-B2F0-A4333F016031}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F4DE3A-AB65-4DDB-B2F0-A4333F016031}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.StandardHeader = $1
+		$1.Text = 
+		$1.IncludeInNewFiles = True
+		$0.DotNetNamingPolicy = $2
+		$2.DirectoryNamespaceAssociation = PrefixedHierarchical
+		$2.ResourceNamePolicy = FileFormatDefault
+		description = Contacts manager
+	EndGlobalSection
+EndGlobal

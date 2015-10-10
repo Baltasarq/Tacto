@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Tacto
+Comment=Manage your contacts
+Exec=mono /home/baltasarq/Dropbox/prys/Tacto/bin/Release/tacto.exe
+Icon=/home/baltasarq/Dropbox/prys/Tacto/pixmaps/card-file-icon.png
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=GNOME;GTK;Office
