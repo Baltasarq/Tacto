@@ -1,31 +1,20 @@
-
 using System;
 using Tacto.Core;
-using Gtk;
 
 using GtkUtil;
 
 namespace Tacto.Gui {
 	public partial class DlgEditPerson : Gtk.Dialog {
 
-		public DlgEditPerson(Gtk.Window super, CategoryList cats, Person p)
+		private void OnShow()
 		{
-			TransientFor = super;
-			SetPosition( WindowPosition.CenterOnParent );
-			this.Title = super.Title;
-			this.Icon = super.Icon;
-            this.Build();
-
-			ChooseConversionFormat.initCbFormat( this.cbOutputFormat );
-			this.person = p;
-			this.categories = cats;
 			this.UpdateFromPerson();
-			this.UpdateAllUi();
+			this.UpdateAll();
 
-            this.nbFiles.Page = 0;
+			this.nbFiles.Page = 0;
 		}
-		
-		protected void UpdateFromPerson()
+
+		private void UpdateFromPerson()
 		{
 			this.edSurname.Text = this.person.Surname;
 			this.edName.Text    = this.person.Name;
@@ -55,19 +44,19 @@ namespace Tacto.Gui {
 			this.person.Comments    = this.edComments.Text;
 			
 			if ( !this.person.IsEnoughData() ) {
-				throw new ApplicationException( "Some fields are mandatory. Not enough data given." );
+				throw new ApplicationException( "Not enough data given: some fields are mandatory." );
 			}
 			  
 		}
 		
-		protected void UpdateAllUi()
+		private void UpdateAll()
 		{
 			this.FillAvailableCategories();
 			this.FillCurrentCategories();
-			this.FillPersonCategories();
+			this.UpdatePersonCategories();
 		}
-		
-		protected void FillPersonCategories()
+
+		private void UpdatePersonCategories()
 		{
 			string cats = "";
 			
@@ -79,13 +68,12 @@ namespace Tacto.Gui {
 				cats = cats.Substring( 0, cats.Length -2 );
 			}
 			
-			// Update ui
-			lblCategories.Text = cats;
+			lblCategories.Markup = "<i>Current categories</i>: " + cats;
 		}
 		
-		protected void FillAvailableCategories()
+		private void FillAvailableCategories()
 		{
-			( this.cbAvailableCategories.Model as ListStore ).Clear();
+			( this.cbAvailableCategories.Model as Gtk.ListStore ).Clear();
 			
 			foreach(var category in this.categories) {
 				this.cbAvailableCategories.AppendText( category.Name );
@@ -94,31 +82,32 @@ namespace Tacto.Gui {
 			this.cbAvailableCategories.Active = 0;
 		}
 		
-		protected void FillCurrentCategories()
+		private void FillCurrentCategories()
 		{
-			( this.cbCurrentCategories.Model as ListStore ).Clear();
+			( this.cbCurrentCategories.Model as Gtk.ListStore ).Clear();
 			
 			foreach(var category in this.person.Categories) {
 				this.cbCurrentCategories.AppendText( category.Name );
 			}
+
 			this.cbCurrentCategories.Active = 0;
 		}
 		
-		protected virtual void OnAddCategory(object sender, System.EventArgs e)
+		private void OnAddCategory()
 		{
-			int catNumber = cbAvailableCategories.Active;
+			int categoryIndex = cbAvailableCategories.Active;
 			
 			try {
-				this.person.Categories = new Category[]{ categories.Get( catNumber ) };
+				this.person.Categories = new Category[]{ categories.Get( categoryIndex ) };
 				this.FillCurrentCategories();
-				this.FillPersonCategories();
+				this.UpdatePersonCategories();
 			} catch(Exception exc)
 			{
 				Util.MsgError( this, AppInfo.Name, "Category could not be added: " + exc.Message );
 			}
 		}
 		
-		protected virtual void OnRemoveCategory(object sender, System.EventArgs e)
+		private void OnRemoveCategory()
 		{
 			string categoryText = cbCurrentCategories.ActiveText;
 			
@@ -126,7 +115,7 @@ namespace Tacto.Gui {
 				try {
 					this.person.RemoveCategory( categoryText );
 					this.FillCurrentCategories();
-					this.FillPersonCategories();
+					this.UpdatePersonCategories();
 				} catch(Exception exc)
 				{
 					Util.MsgError( this, AppInfo.Name, "Error removing category: " + exc.Message );
@@ -134,7 +123,7 @@ namespace Tacto.Gui {
 			} else Util.MsgError( this, AppInfo.Name, "Please select one category" );
 		}
 		
-		protected virtual void OnSaveAs(object sender, System.EventArgs e)
+		private void OnSaveAs()
 		{
 			string fileName = "";
 			string filter   = "*";
@@ -162,7 +151,7 @@ namespace Tacto.Gui {
 			return;
 		}
 		
-		protected virtual void OnConnect(object sender, System.EventArgs e)
+		private void OnConnect(object sender)
 		{
 			string email = "";
 
@@ -175,6 +164,7 @@ namespace Tacto.Gui {
 			}
 
 			try {
+				email = email.Trim();
 				var mailer = new EmailConnectionManager( email );
 				mailer.Open();
 			} catch(Exception exc)
@@ -185,10 +175,25 @@ namespace Tacto.Gui {
 			return;
 		}
 
-		protected virtual void OnConnectWeb(object sender, System.EventArgs e)
+		private void OnConnectWeb()
 		{
 			try {
 				var weber = new HttpConnectionManager( this.edWeb.Text );
+				weber.Open();
+			} catch(Exception exc)
+			{
+				Util.MsgError( this, AppInfo.Name, exc.Message );
+			}
+
+			return;
+		}
+
+		private void OnConnectMap() {
+			string url = HttpConnectionManager.UrlGMapsSearch
+							+ this.edAddress.Text.Trim().Replace( ' ', '+' );
+
+			try {
+				var weber = new HttpConnectionManager( url );
 				weber.Open();
 			} catch(Exception exc)
 			{

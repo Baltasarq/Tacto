@@ -11,6 +11,7 @@ namespace Tacto.Gui
 {
 	public partial class MainWindow : Gtk.Window
 	{
+		public const string EtqNotAvailable = "n/a";
 		public const string EtqLastFile = "lastfile";
 		public const string EtqWidth    = "width";
 		public const string EtqHeight   = "height";
@@ -183,7 +184,7 @@ namespace Tacto.Gui
 			 
 			SetStatus();
 			this.tvTable.ButtonReleaseEvent += OnTableClick;
-			this.tvTable.RowActivated += OnEdit;
+			this.tvTable.RowActivated += ( sender, evt ) => this.OnEdit( null, null );
 			return;
 		}
 		
@@ -207,7 +208,7 @@ namespace Tacto.Gui
 			// Edit
 			var menuItemEdit = new Gtk.ImageMenuItem( "_Edit" );
             menuItemEdit.Image = new Gtk.Image( Gtk.Stock.Clear, Gtk.IconSize.Menu );
-			menuItemEdit.Activated += delegate { this.OnEdit( null, null ); };
+			menuItemEdit.Activated += (sender, evt) => this.OnEdit( null, null );
 			popup.Append( menuItemEdit );
 
 			// Categories
@@ -370,12 +371,20 @@ namespace Tacto.Gui
 					Util.MsgError( this, AppInfo.Name, exc.Message );
 				}
 				finally {
+					int rowIndex = this.persons.Find( p );
+
 					if ( dlg != null ) {
 						dlg.Destroy();
 					}
 
+					if ( rowIndex < 0 ) {
+						p = backupPerson;
+						this.InsertPerson( p );
+						rowIndex = this.persons.Find( p );
+					}
+
 					this.UpdatePersons();
-					this.SetCurrentPositionInDocument( this.persons.Find( p ), 0 );
+					this.SetCurrentPositionInDocument( rowIndex, 0 );
 				}
 			} else {
 				Util.MsgError( this, AppInfo.Name, "person position out of bounds" );
@@ -418,7 +427,7 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected virtual void OnEdit(object sender, System.EventArgs e)
+		protected virtual void OnEdit(object sender, EventArgs evt)
 		{
 			int row;
 			int column;
@@ -551,11 +560,7 @@ namespace Tacto.Gui
 			DlgCategories dlg = null;
 			
 			try {
-				dlg = new DlgCategories( agendaSystem );
-				dlg.Modal = true;
-				dlg.Parent = this;
-				dlg.TransientFor = this;
-                dlg.SetPosition( Gtk.WindowPosition.CenterOnParent );
+				dlg = new DlgCategories( this, this.agendaSystem );
 				dlg.Run();
 				
 				this.UpdateCategories();
@@ -710,7 +715,7 @@ namespace Tacto.Gui
             this.edSearch.ModifyText( Gtk.StateType.Normal, new Gdk.Color( 0, 0, 0 ) );
 		}
 		
-		protected void TriggerSearch()
+		private void TriggerSearch()
 		{
 			int row;
 			int column;
@@ -725,7 +730,7 @@ namespace Tacto.Gui
 		
 		protected virtual void OnListRowActivated(object o, Gtk.RowActivatedArgs args)
 		{
-			OnEdit( o, null );
+			this.OnEdit( null, null );
 		}
 		
 		protected void Import(string fileName, Person.Format fmt)
@@ -941,17 +946,17 @@ namespace Tacto.Gui
 			int column;
 			
 			// Initialise labels
-			this.lblMobilePhone.Markup = "N/A";
-			this.lblPhoneWork.Markup = "N/A";
-			this.lblAddress.Text = "N/A";
-			this.lblEmail2.Text = "N/A";
-			this.lblEmail.Text = "N/A";
-			this.lblPhone.Text = "N/A";
+			this.lblMobilePhone.Markup = EtqNotAvailable;
+			this.lblPhoneWork.Markup = EtqNotAvailable;
+			this.lblAddress.Text = EtqNotAvailable;
+			this.lblEmail2.Text = EtqNotAvailable;
+			this.lblEmail.Text = EtqNotAvailable;
+			this.lblPhone.Text = EtqNotAvailable;
 			
 			if ( this.persons.Size() < 1 ) {
 				
-				this.lblSurname.Markup = "N/A";
-				this.lblName.Markup = "N/A";
+				this.lblSurname.Markup = EtqNotAvailable;
+				this.lblName.Markup = EtqNotAvailable;
 				this.frmMainContact.Hide();
 				
 			} else {

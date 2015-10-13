@@ -16,26 +16,16 @@ namespace Tacto.Core
 		);
 		
 		public Person()
+			:this( "Doe", "John", "john@doe.com", "0", null )
 		{
-			Init( "Doe", "John", "john@doe.com", "0", null );
 		}
 		
 		public Person(string surname, string name, string email, string phone)
+			:this( surname, name, email, phone, null )
 		{
-			Init( surname, name, email, phone, null );
 		}
-		
-		public Person(string surname, string name, string email, string phone, Category category)
-		{
-			Init( surname, name, email, phone, new Category[]{ category } );
-		}
-		
+			
 		public Person(string surname, string name, string email, string phone, Category[] categories)
-		{
-			Init( surname, name, email, phone, categories );
-		}
-		
-		private void Init(string surname, string name, string email, string phone, Category[] categories)
 		{
 			this.Surname = surname;
 			this.Name = name;
@@ -115,6 +105,11 @@ namespace Tacto.Core
 			this.categories.AppendRange( l.ToArray() );
 		}
 
+		/// <summary>
+		/// Gets or sets the identifier.
+		/// This can be a DNI or Passport number.
+		/// </summary>
+		/// <value>The identifier.</value>
 		public string Id {
 			get {
 				return id;

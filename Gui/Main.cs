@@ -9,8 +9,7 @@ namespace Tacto
 		public static void Main(string[] args)
 		{
 			Application.Init();
-			MainWindow win = new MainWindow();
-			win.Show();
+			new MainWindow().ShowAll();
 			Application.Run();
 		}
 	}
