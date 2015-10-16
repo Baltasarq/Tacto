@@ -5,7 +5,7 @@ using Gtk;
 using GtkUtil;
 
 namespace Tacto.Gui {
-	public partial class DlgCategories: Gtk.Dialog {
+	public partial class DlgSettings: Gtk.Dialog {
 		public static string Header = "Category";
 
 		public void OnShow()

@@ -1,0 +1,4 @@
+- Enlace con Google Maps
+- Campos de contacto:
+	- Rol
+- Comprobar duplicados

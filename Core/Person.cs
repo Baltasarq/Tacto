@@ -10,10 +10,16 @@ namespace Tacto.Core
 	{
 		public const string WebProtocolPrefix = "http://";
 		public enum Format { CSV, HTML, VCF };
+		public ReadOnlyCollection<string> TrimAddressPrefixes = 
+			new ReadOnlyCollection<string>(
+				new string[] { "c\\", "c/", "avenida", "avda." }
 
-		public static readonly ReadOnlyCollection<string> FormatNames = new ReadOnlyCollection<string>(
-			new string[]{ "CSV", "HTML", "VCF" }
-		);
+			);
+
+		public static readonly ReadOnlyCollection<string> FormatNames =
+			new ReadOnlyCollection<string>(
+				new string[]{ "CSV", "HTML", "VCF" }
+			);
 		
 		public Person()
 			:this( "Doe", "John", "john@doe.com", "0", null )
@@ -53,6 +59,12 @@ namespace Tacto.Core
 			}
 			set {
 				this.address = value.Trim();
+
+				foreach(string prefix in TrimAddressPrefixes) {
+					if ( this.address.ToLower().StartsWith( prefix ) ) {
+						this.address = this.address.Substring( prefix.Length ).TrimStart();
+					}
+				}
 			}
 		}
 		

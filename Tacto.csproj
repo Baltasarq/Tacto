@@ -31,35 +31,33 @@
     <Reference Include="System" />
     <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
+      <Package>glib-sharp-2.0</Package>
     </Reference>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="GtkUtil">
       <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
     </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="gtk-gui\gui.stetic">
-      <LogicalName>gui.stetic</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="pixmaps\card-file-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="Gui\AssemblyInfo.cs" />
-    <Compile Include="Gui\MainWindow.cs" />
     <Compile Include="Core\AppInfo.cs" />
     <Compile Include="Gui\Main.cs" />
     <Compile Include="Core\Person.cs" />
@@ -67,7 +65,6 @@
     <Compile Include="Core\Category.cs" />
     <Compile Include="Core\CategoryList.cs" />
     <Compile Include="Core\AgendaSystem.cs" />
-    <Compile Include="gtk-gui\Tacto.Gui.MainWindow.cs" />
     <Compile Include="Core\CsvManager.cs" />
     <Compile Include="Core\VcfManager.cs" />
     <Compile Include="Core\FileFormatManager.cs" />
@@ -75,12 +72,14 @@
     <Compile Include="Core\EmailConnectionManager.cs" />
     <Compile Include="Core\ConnectionManager.cs" />
     <Compile Include="Core\HttpConnectionManager.cs" />
-    <Compile Include="Gui\DlgCategoriesView.cs" />
-    <Compile Include="Gui\DlgCategoriesCore.cs" />
     <Compile Include="Gui\ChooseConversionFormatCore.cs" />
     <Compile Include="Gui\ChooseConversionFormatView.cs" />
     <Compile Include="Gui\DlgEditPersonCore.cs" />
     <Compile Include="Gui\DlgEditPersonView.cs" />
+    <Compile Include="Gui\MainWindowView.cs" />
+    <Compile Include="Gui\MainWindowCore.cs" />
+    <Compile Include="Gui\DlgSettingsCore.cs" />
+    <Compile Include="Gui\DlgSettingsView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

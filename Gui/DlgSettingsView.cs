@@ -2,8 +2,8 @@
 
 namespace Tacto.Gui
 {
-	public partial class DlgCategories: Gtk.Dialog {
-		public DlgCategories(Gtk.Window parent, Tacto.Core.AgendaSystem agenda)
+	public partial class DlgSettings: Gtk.Dialog {
+		public DlgSettings(Gtk.Window parent, Tacto.Core.AgendaSystem agenda)
 		{
 			this.agendaSystem = agenda;
 			this.TransientFor = parent;

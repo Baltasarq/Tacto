@@ -9,7 +9,7 @@ using GtkUtil;
 
 namespace Tacto.Gui
 {
-	public partial class MainWindow : Gtk.Window
+	public partial class MainWindow: Gtk.Window
 	{
 		public const string EtqNotAvailable = "n/a";
 		public const string EtqLastFile = "lastfile";
@@ -21,140 +21,52 @@ namespace Tacto.Gui
 			new string[] { "#", "Surname", "Name", "Email", "Phone" }
 		);
 		
-		public Category CurrentCategory {
-			get { 
-				Category toret = currentCategory;
-				
-				if ( toret == null ) {
-					toret = agendaSystem.CategoryList.LookFor( Category.EtqCategoryAll );
-				}
-				
-				return toret;
-			}
-		}
-		
-		public bool Init {
-			get { return init; }
-			set { init = value; }
-		}
-		
-		public string CfgFile
+		public void OnShow()
 		{
-			get {
-				if ( this.cfgFile.Trim().Length == 0 ) {
-					this.cfgFile = Util.GetCfgCompletePath( CfgFileName );
-				}
-				
-				return this.cfgFile;
-			}
-		}
-		
-		public MainWindow() : base(Gtk.WindowType.Toplevel)
-		{
-			// Prepare window
-			this.init = true;
-			this.Build();
-			this.Title = AppInfo.Name;
-			this.CreatePopup();
-			this.PrepareContactFrame();
-			this.eventbox1.ButtonReleaseEvent += this.OnLblEmail1Clicked;
-			this.eventbox2.ButtonReleaseEvent += this.OnLblEmail2Clicked;
-			this.lblEmptyExplanation.UseMarkup = true;
-			
-			// Prepare a new document
+			this.searchString = "";
+			this.searchRow = 0;
+			this.fileName = "";
+			this.cfgFile = "";
+	//		this.eventbox1.ButtonReleaseEvent += this.OnLblEmail1Clicked;
+	//		this.eventbox2.ButtonReleaseEvent += this.OnLblEmail2Clicked;
+
 			this.New();
-			
-			// Prepare the table for all data
-			this.SetStatus( "Ready" );
-			this.PrepareTable();
 			this.ReadConfiguration();
 			
-			// If not loaded anything, activate anyway
-			if ( this.agendaSystem.PersonsList.Size() == 0 ) {
-				this.UpdateCategories();
-				this.ActivateGui();
-			}
-			
-			this.init = false;
-			this.UpdateContactFrame();
+			this.UpdateCategories();
+			this.UpdateCard();
+			this.ActivateGui();
+			this.SetStatus( "Ready" );
+			this.Init = false;
 			return;
 		}	
 		
-		protected void PrepareContactFrame()
-		{
-			// Contact frame labels
-			this.lblSurname.ModifyFont(
-				Pango.FontDescription.FromString( "Times 18" )
-			);
-			
-			this.lblName.ModifyFont(
-				Pango.FontDescription.FromString( "Times 18" )
-			);
-			
-			this.lblPhone.ModifyFont(
-				Pango.FontDescription.FromString( "Times 14" )
-			);
-			
-			this.lblPhoneWork.ModifyFont(
-				Pango.FontDescription.FromString( "Times 14" )
-			);
-			
-			this.lblAddress.ModifyFont(
-				Pango.FontDescription.FromString( "Times 14" )
-			);
-			
-			this.lblMobilePhone.ModifyFont(
-				Pango.FontDescription.FromString( "Times 14" )
-			);
-			
-			this.lblEmail.ModifyFont(
-				Pango.FontDescription.FromString( "Mono 14" )
-			);
-			
-			this.lblEmail2.ModifyFont(
-				Pango.FontDescription.FromString( "Mono 14" )
-			);
-			
-			return;
-		}
-
-		
 		public void SetStatus()
 		{
-			sbStatus.Pop( 0 );
+			this.sbStatus.Pop( 0 );
+			this.sbStatus.Push( 0, "Ready" );
 		}
 		
 		public void SetStatus(string statusMsg)
 		{
-			sbStatus.Push( 0, statusMsg );
+			this.sbStatus.Push( 0, statusMsg );
 			Util.UpdateUI();
 		}
 		
-		protected void InitData(AgendaSystem agenda)
+		private void InitData(AgendaSystem agenda)
 		{
-			agendaSystem = agenda;
-			persons = agendaSystem.PersonsList;
+			this.agendaSystem = agenda;
+			this.persons = agendaSystem.PersonsList;
 		}
 		
-		protected void Quit()
+		private void Quit()
 		{
 			this.Save();
 			this.WriteConfiguration();
             Gtk.Application.Quit();
 		}
 	
-		protected void OnDeleteEvent(object sender, Gtk.DeleteEventArgs a)
-		{
-			Quit();
-			a.RetVal = true;
-		}
-		
-		protected virtual void OnQuit(object sender, System.EventArgs e)
-		{
-			Quit();
-		}
-		
-		protected virtual void OnAbout(object sender, System.EventArgs e)
+		private void OnAbout()
 		{
 			var aboutDlg = new Gtk.AboutDialog();
 
@@ -175,103 +87,56 @@ namespace Tacto.Gui
 			aboutDlg.Destroy();
 		}
 		
-		protected void PrepareTable()
+		private void OnTableClick(object o, Gtk.ButtonReleaseEventArgs args)
 		{
-			SetStatus( "Prepare columns..." );
-			
-			this.ttvTableView = new TableTextView( this.tvTable, Headers.Count, Headers.Count );
-			this.ttvTableView.Headers = Headers;
-			 
-			SetStatus();
-			this.tvTable.ButtonReleaseEvent += OnTableClick;
-			this.tvTable.RowActivated += ( sender, evt ) => this.OnEdit( null, null );
-			return;
-		}
-		
-		protected virtual void CreatePopup()
-		{
-			// Menu
-			popup = new Gtk.Menu();
-			
-			// Insert
-			var menuItemInsert = new Gtk.ImageMenuItem( "_Insert" );
-            menuItemInsert.Image = new Gtk.Image( Gtk.Stock.Add, Gtk.IconSize.Menu );
-			menuItemInsert.Activated += delegate { this.OnAdd( null, null ); };
-			popup.Append( menuItemInsert );
-			
-			// Remove
-			var menuItemRemove = new Gtk.ImageMenuItem( "_Remove" );
-            menuItemRemove.Image = new Gtk.Image( Gtk.Stock.Remove, Gtk.IconSize.Menu );
-			menuItemRemove.Activated += delegate { this.OnRemove( null, null ); };
-			popup.Append( menuItemRemove );
-			
-			// Edit
-			var menuItemEdit = new Gtk.ImageMenuItem( "_Edit" );
-            menuItemEdit.Image = new Gtk.Image( Gtk.Stock.Clear, Gtk.IconSize.Menu );
-			menuItemEdit.Activated += (sender, evt) => this.OnEdit( null, null );
-			popup.Append( menuItemEdit );
-
-			// Categories
-			popup.Append( new Gtk.SeparatorMenuItem() );
-			var menuItemProperties = new Gtk.ImageMenuItem( "_Properties" );
-            menuItemProperties.Image = new Gtk.Image( Gtk.Stock.Properties, Gtk.IconSize.Menu );
-			menuItemProperties.Activated += delegate { this.OnEditCategories( null, null ); };
-			popup.Append( menuItemProperties );
-			
-			// Finish
-			popup.ShowAll();
-		}
-		
-		protected virtual void OnTableClick(object o, Gtk.ButtonReleaseEventArgs args)
-		{
-			this.UpdateContactFrame();
+			this.UpdateCard();
 			
 			if ( args.Event.Button == 3 ) {
-				popup.Popup();
+				this.popup.Popup();
 			}	 				
 		}
 		
-		protected void UpdateCategories()
+		private void UpdateCategories()
 		{
 			// Update the cbCategory combo
-			Init = true;
+			this.Init = true;
 			
 			// remove items
-            cbCategory.Model = new Gtk.ListStore( typeof(string) );
+			this.cbCategory.Model = new Gtk.ListStore( typeof(string) );
 			
 			// add items
-			foreach(var category in agendaSystem.CategoryList) {
-				cbCategory.AppendText( category.Name );
+			foreach(var category in this.agendaSystem.CategoryList) {
+				this.cbCategory.AppendText( category.Name );
 			}
-			cbCategory.Active = 0;
-			cbCategory.Show();
+			this.cbCategory.Active = 0;
+			this.cbCategory.Show();
 
-			Init = false;
-			SetStatus();
+			this.Init = false;
+			this.SetStatus();
 		}
 
-		protected void UpdatePersons()
+		private void UpdatePersons()
 		{
-			SetStatus( "Listing persons..." );
+			this.SetStatus( "Listing persons..." );
 
 			// Prepare table
 			this.tvTable.Hide();
-			this.ttvTableView.RemoveAllRows();
+			this.ttTable.RemoveAllRows();
 			
 			if ( this.persons.Size() > 0 )
 			{
 				this.lblEmptyExplanation.Hide();
 				
 				// Update persons table
-				for(int i = 0; i < persons.Size(); ++i) {
-					var p = persons.Get( i );
+				for(int i = 0; i < this.persons.Size(); ++i) {
+					var p = this.persons.Get( i );
 					
 					// Update each row
-					this.ttvTableView.AppendRow();
-					this.ttvTableView.Set( i, 1, p.Surname );
-					this.ttvTableView.Set( i, 2, p.Name );
-					this.ttvTableView.Set( i, 3, p.AnyEmail );
-					this.ttvTableView.Set( i, 4, p.AnyPhone );
+					this.ttTable.AppendRow();
+					this.ttTable.Set( i, 1, p.Surname );
+					this.ttTable.Set( i, 2, p.Name );
+					this.ttTable.Set( i, 3, p.AnyEmail );
+					this.ttTable.Set( i, 4, p.AnyPhone );
 				}
 				
 				this.tvTable.Show();
@@ -293,25 +158,26 @@ namespace Tacto.Gui
 				}
 				this.lblEmptyExplanation.Show();
 			}
-			
+
+			this.lblNumRecords.Text = this.persons.Size().ToString();
 			this.SetStatus();
-			this.UpdateContactFrame();
+			this.UpdateCard();
 			return;
 		}
 		
-		protected void UpdateInfo()
+		private void UpdateInfo()
 		{
 			this.UpdateCategories();
 			this.UpdatePersons();
-			this.UpdateContactFrame();
+			this.UpdateCard();
 		}
 		
-		protected virtual void OnAdd(object sender, System.EventArgs e)
+		private void OnAdd()
 		{
 			Person p = new Person();
 			
 			// Add category to the person
-			if ( persons != agendaSystem.PersonsList ) {
+			if ( this.persons != agendaSystem.PersonsList ) {
 				p.Categories = new Category[]{ CurrentCategory };
 			}
 			
@@ -323,7 +189,7 @@ namespace Tacto.Gui
 			this.SetCurrentPositionInDocument( this.persons.Find( p ), 0 );
 		}
 		
-		protected virtual void OnRemove(object sender, System.EventArgs e)
+		private void OnRemove()
 		{
 			int row;
 			int column;
@@ -341,7 +207,7 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected void Edit(int pos)
+		private void Edit(int pos)
 		{
 			DlgEditPerson dlg = null;
 			Person p = null;
@@ -350,6 +216,8 @@ namespace Tacto.Gui
 			if ( pos >= 0
 			  && pos < this.agendaSystem.PersonsList.Size() )
 			{
+				this.SetStatus( "Editing contact..." );
+
 				try {
 					// Get the person and eliminate it of all lists
 					p = this.agendaSystem.PersonsList.Get( pos );
@@ -385,6 +253,7 @@ namespace Tacto.Gui
 
 					this.UpdatePersons();
 					this.SetCurrentPositionInDocument( rowIndex, 0 );
+					this.SetStatus();
 				}
 			} else {
 				Util.MsgError( this, AppInfo.Name, "person position out of bounds" );
@@ -401,13 +270,16 @@ namespace Tacto.Gui
 		/// <param name='p'>
 		/// The Person object to remove
 		/// </param>
-		protected void ErasePerson(Person p)
+		private void ErasePerson(Person p)
 		{
+			this.SetStatus( "Removing contact..." );
 			this.persons.Remove( this.persons.Find( p ) );
 			
 			if ( this.persons != this.agendaSystem.PersonsList ) {
 				this.agendaSystem.PersonsList.Remove( this.agendaSystem.PersonsList.Find( p ) );
 			}
+
+			this.SetStatus();
 		}
 		
 		/// <summary>
@@ -418,7 +290,7 @@ namespace Tacto.Gui
 		/// <param name='p'>
 		/// The Person object to insert.
 		/// </param>
-		protected void InsertPerson(Person p)
+		private void InsertPerson(Person p)
 		{
 			this.persons.Insert( p );
 			
@@ -427,28 +299,32 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected virtual void OnEdit(object sender, EventArgs evt)
+		private void OnEdit()
 		{
 			int row;
 			int column;
-			
-			GetCurrentPositionInDocument( out row, out column );
-			
-			// Lookup in the main list of persons, since it is going to be changed.
-			this.Edit( this.agendaSystem.PersonsList.Find( this.persons.Get( row ) ) );
+
+			if ( this.persons.Size() > 0 ) {
+				this.GetCurrentPositionInDocument( out row, out column );
+				
+				// Lookup in the main list of persons, since it is going to be changed.
+				this.Edit( this.agendaSystem.PersonsList.Find( this.persons.Get( row ) ) );
+			}
+
+			return;
 		}
 
 		public void SetCurrentPositionInDocument(int row, int col)
 		{
 			if ( this.persons.Size() > 0 ) {
-				this.ttvTableView.SetCurrentCell( row, col +1 );
-				this.UpdateContactFrame();
+				this.ttTable.SetCurrentCell( row, col +1 );
+				this.UpdateCard();
 			}
 		}
 		
 		public void GetCurrentPositionInDocument(out int row, out int col)
 		{
-			this.ttvTableView.GetCurrentCell( out row, out col );
+			this.ttTable.GetCurrentCell( out row, out col );
 			
 			// Adapt column from UI
 			--col;
@@ -486,7 +362,7 @@ namespace Tacto.Gui
 			return toret;
 		}
 		
-		protected void Save()
+		private void Save()
 		{
 			this.SetStatus( "Saving..." );	
 			fileName = agendaSystem.FileName;
@@ -513,12 +389,7 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected virtual void OnSave(object sender, System.EventArgs e)
-		{
-			Save();
-		}
-		
-		protected virtual void Open(string file)
+		private void Open(string file)
 		{
 			try {
 				if ( file.Length > 0 ) {
@@ -534,7 +405,7 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected virtual void OnOpen(object sender, System.EventArgs e)
+		private void OnOpen()
 		{
 			try {
 				// Save
@@ -555,12 +426,12 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected virtual void OnEditCategories(object sender, System.EventArgs e)
+		private void OnSettings()
 		{
-			DlgCategories dlg = null;
+			DlgSettings dlg = null;
 			
 			try {
-				dlg = new DlgCategories( this, this.agendaSystem );
+				dlg = new DlgSettings( this, this.agendaSystem );
 				dlg.Run();
 				
 				this.UpdateCategories();
@@ -582,7 +453,7 @@ namespace Tacto.Gui
 			}
 		}
 
-		protected virtual void OnCategoryChanged(object sender, System.EventArgs e)
+		private void OnCategoryChanged()
 		{
 			if ( !Init ) {
 				int categoryNumber = cbCategory.Active;
@@ -590,12 +461,12 @@ namespace Tacto.Gui
 				if ( categoryNumber >= 0 ) {
 					this.SetCategoryAsFilter( agendaSystem.CategoryList.Get( categoryNumber ) );
 					this.UpdatePersons();
-					this.UpdateContactFrame();
+					this.UpdateCard();
 				}
 			}
 		}
 		
-		protected void SetCategoryAsFilter(Category category)
+		private void SetCategoryAsFilter(Category category)
 		{
 			try {
 				if ( category != null )
@@ -619,7 +490,7 @@ namespace Tacto.Gui
 			}
 		}
 
-		protected virtual void OnConvert(object sender, System.EventArgs e)
+		private void OnExport()
 		{
 			var fmt = Person.Format.CSV;
 			var fileName = "";
@@ -643,11 +514,11 @@ namespace Tacto.Gui
 		{
 			int size = persons.Size();
 			
-			SetStatus( "Searching..." );
+			this.SetStatus( "Searching..." );
 			
-			// set search cache
-			searchString = text.Trim().ToLower();
-			searchRow = -1;
+			// Set search cache
+			this.searchString = text.Trim().ToLower();
+			this.searchRow = -1;
 			
 			if ( size < row ) {
 				row = 0;
@@ -655,23 +526,23 @@ namespace Tacto.Gui
 			
 			// look for text
 			for(int i = row; i < size; ++i) {
-				if ( persons.Get( i ).LookFor( searchString ) ) {
-					searchRow = i;
+				if ( this.persons.Get( i ).LookFor( this.searchString ) ) {
+					this.searchRow = i;
 					break;
 				}
 			}
 			
 			// Move to the person if found
-			if ( searchRow >= 0 )
-					SetCurrentPositionInDocument( searchRow, 1 );
+			if ( this.searchRow >= 0 )
+				this.SetCurrentPositionInDocument( searchRow, 1 );
 			else {
-				searchRow = 0;
+				this.searchRow = 0;
 				Util.MsgInfo( this, AppInfo.Name, "'" + searchString + "' was not found" );
 			}
 			
 			this.SetStatus();
 			this.tvTable.GrabFocus();
-			this.UpdateContactFrame();
+			this.UpdateCard();
 			return;
 		}
 		
@@ -693,23 +564,23 @@ namespace Tacto.Gui
 			SetStatus();
 		}
 		
-		protected void ResetSearchField()
+		private void ResetSearchField()
 		{
-            edSearch.ModifyText( Gtk.StateType.Normal, new Gdk.Color( 0xa9, 0xa9, 0xa9 ) );
-			edSearch.Text = "Search...";
+            this.edSearch.ModifyText( Gtk.StateType.Normal, new Gdk.Color( 0xa9, 0xa9, 0xa9 ) );
+			this.edSearch.Text = "Search...";
 		}
 		
-		protected virtual void OnFindAgain(object sender, System.EventArgs e)
+		private void OnFindAgain()
 		{
-			Find( searchString, searchRow +1 );
+			this.Find( this.searchString, searchRow +1 );
 		}
 		
-		protected virtual void OnFind(object sender, System.EventArgs e)
+		private void OnFind()
 		{
 			this.edSearch.GrabFocus();
 		}
 		
-		protected virtual void OnFocusEdSearch(object o, Gtk.FocusInEventArgs args)
+		private void OnFocusEdSearch()
 		{
 			this.edSearch.Text = "";
             this.edSearch.ModifyText( Gtk.StateType.Normal, new Gdk.Color( 0, 0, 0 ) );
@@ -722,18 +593,13 @@ namespace Tacto.Gui
 			
 			if ( this.persons.Size() > 0 ) {
 				this.GetCurrentPositionInDocument( out row, out column );
-				Find( edSearch.Text, row );
+				this.Find( edSearch.Text, row );
 			}
 			
 			return;
 		}
 		
-		protected virtual void OnListRowActivated(object o, Gtk.RowActivatedArgs args)
-		{
-			this.OnEdit( null, null );
-		}
-		
-		protected void Import(string fileName, Person.Format fmt)
+		private void Import(string fileName, Person.Format fmt)
 		{
 			PersonsList pl = null;
 			
@@ -754,14 +620,14 @@ namespace Tacto.Gui
 			}
 			
 			// Finish
-			persons = agendaSystem.PersonsList;
-			cbCategory.Active = 0;
-			UpdatePersons();
+			this.persons = this.agendaSystem.PersonsList;
+			this.cbCategory.Active = 0;
+			this.UpdatePersons();
 			Util.MsgInfo( this, AppInfo.Name, "Added " + pl.Size() + " persons" );
 
 		}
 		
-		protected virtual void OnImport(object sender, System.EventArgs e)
+		private void OnImport()
 		{
 			SetStatus( "Importing..." );
 			
@@ -780,17 +646,17 @@ namespace Tacto.Gui
 				chfmt.Destroy();
 				
 				if ( result != Gtk.ResponseType.Cancel ) {
-					Import( fileName, fmt );
+					this.Import( fileName, fmt );
 				}
 			} catch(Exception exc)
 			{
 				Util.MsgError( this, AppInfo.Name, exc.Message );
 			}
 			
-			SetStatus();
+			this.SetStatus();
 		}
 		
-		protected void Send(String addr)
+		private void Send(String addr)
 		{
 			try {
 				// Open message
@@ -803,7 +669,7 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected void Sort()
+		private void Sort()
 		{
 			try {
 				SetStatus( "Sorting..." );
@@ -820,19 +686,14 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected void New()
+		private void New()
 		{
 			// New document
 			this.InitData( new AgendaSystem() );
 			this.ResetSearchField();
 		}
 		
-		protected virtual void OnSort(object sender, System.EventArgs e)
-		{
-			Sort();
-		}
-		
-		protected virtual void OnConnect(object sender, System.EventArgs e)
+		private void OnConnect()
 		{
 			int row;
 			int col;
@@ -848,7 +709,7 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected virtual void OnNew(object sender, System.EventArgs e)
+		private void OnNew()
 		{
 			// Save current document
 			this.Save();
@@ -860,23 +721,16 @@ namespace Tacto.Gui
 			this.UpdateInfo();
 		}
 		
-		protected void ActivateGui()
+		private void ActivateGui()
 		{
 			bool active = ( this.persons.Size() > 0 );
 			
-			// Toolbar buttons
-			removeAction.Sensitive  = active;
-			editAction.Sensitive    = active;
-			connectAction.Sensitive = active;
-			
-			// Menu options
-			removeAction1.Sensitive = active;
-			editAction1.Sensitive   = active;
-			findAction.Sensitive    = active;
-			opFindAgain.Sensitive   = active;
-			
-			// Menus
-			ToolsAction.Sensitive   = active;
+			this.actRemove.Sensitive  = active;
+			this.actModify.Sensitive    = active;
+			this.actConnect.Sensitive = active;
+			this.actFind.Sensitive = active;
+			this.actFindAgain.Sensitive = active;
+			this.actSort.Sensitive = active;
 		}
 		
 		public void WriteConfiguration()
@@ -924,7 +778,7 @@ namespace Tacto.Gui
 			}
 		}
 		
-		protected virtual void OnEdSearchKeyReleased(object o, Gtk.KeyReleaseEventArgs args)
+		private void OnEdSearchKeyReleased(object o, Gtk.KeyReleaseEventArgs args)
 		{
 			if ( args.Event.Key == Gdk.Key.KP_Enter
 			  || args.Event.Key == Gdk.Key.Return )
@@ -935,33 +789,31 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected virtual void OnFocusOutEdSearch(object o, Gtk.FocusOutEventArgs args)
+		private void OnFocusOutEdSearch()
 		{
 			this.ResetSearchField();
 		}
 		
-		protected void UpdateContactFrame()
+		private void UpdateCard()
 		{
 			int row;
 			int column;
 			
 			// Initialise labels
 			this.lblMobilePhone.Markup = EtqNotAvailable;
-			this.lblPhoneWork.Markup = EtqNotAvailable;
+			this.lblHomePhone.Markup = EtqNotAvailable;
+			this.lblWorkPhone.Markup = EtqNotAvailable;
 			this.lblAddress.Text = EtqNotAvailable;
 			this.lblEmail2.Text = EtqNotAvailable;
 			this.lblEmail.Text = EtqNotAvailable;
-			this.lblPhone.Text = EtqNotAvailable;
-			
+
 			if ( this.persons.Size() < 1 ) {
 				
 				this.lblSurname.Markup = EtqNotAvailable;
 				this.lblName.Markup = EtqNotAvailable;
-				this.frmMainContact.Hide();
+				this.frmCard.Hide();
 				
 			} else {
-				this.frmMainContact.Show();
-			
 				// Get person
 				GetCurrentPositionInDocument( out row, out column );
 				
@@ -976,7 +828,7 @@ namespace Tacto.Gui
 				}
 				
 				if ( p.HomePhone.Trim().Length > 0 ) {
-					this.lblPhone.Markup = p.HomePhone;
+					this.lblHomePhone.Markup = p.HomePhone;
 				}
 				
 				if ( p.Address.Trim().Length > 0 ) {
@@ -990,9 +842,9 @@ namespace Tacto.Gui
 				if ( p.WorkPhone.Trim().Length > 0
 				  && p.WorkPhone.Trim() != "0" )
 				{
-					this.lblPhoneWork.Markup = p.WorkPhone;
+					this.lblWorkPhone.Markup = p.WorkPhone;
 				}
-				
+
 				if ( p.Email2.Trim().Length > 0 ) {
 					this.lblEmail2.Markup = "<span foreground=\"blue\"><u>" + p.Email2 + "</u></span>";
 				}
@@ -1003,34 +855,54 @@ namespace Tacto.Gui
 			return;
 		}
 		
-		protected void OnViewContactPanel (object sender, System.EventArgs e)
+		private void OnViewCard()
 		{
-			this.frmMainContact.Visible = this.ContactPanelAction.Active;
-			
-			return;
+			this.frmCard.Visible = !this.frmCard.Visible;
 		}
 		
 		[GLib.ConnectBefore]
-		protected void OnLblEmail1Clicked (object o, Gtk.ButtonReleaseEventArgs args)
+		private void OnLblEmail1Clicked(object o, Gtk.ButtonReleaseEventArgs args)
 		{
 			this.Send( this.lblEmail.Text );
 			return;
 		}
 		
 		[GLib.ConnectBefore]
-		protected void OnLblEmail2Clicked (object o, Gtk.ButtonReleaseEventArgs args)
+		private void OnLblEmail2Clicked(object o, Gtk.ButtonReleaseEventArgs args)
 		{
 			this.Send( this.lblEmail2.Text );
 			return;
 		}
+
+		public Category CurrentCategory {
+			get { 
+				Category toret = currentCategory;
+
+				if ( toret == null ) {
+					toret = agendaSystem.CategoryList.LookFor( Category.EtqCategoryAll );
+				}
+
+				return toret;
+			}
+		}
+
+		public string CfgFile
+		{
+			get {
+				if ( this.cfgFile.Trim().Length == 0 ) {
+					this.cfgFile = Util.GetCfgCompletePath( CfgFileName );
+				}
+
+				return this.cfgFile;
+			}
+		}
 		
-		GtkUtil.TableTextView ttvTableView= null;
-		protected string searchString = "";
-		protected int searchRow = 0;
-		protected string fileName = "";
-		protected string cfgFile = "";
-		protected Boolean init = true;
-		
+		GtkUtil.TableTextView ttTable;
+		protected string searchString;
+		protected int searchRow;
+		protected string fileName;
+		protected string cfgFile;
+
 		/// <summary>
 		/// The agenda system.
 		/// </summary> 
@@ -1039,19 +911,13 @@ namespace Tacto.Gui
 		/// <summary>
 		/// The current category.
 		/// </summary>
-		protected Category currentCategory = null;
+		protected Category currentCategory;
 		
 		/// <summary>
 		/// persons is an attribute carrying out the list of persons
 		/// currently active (honoring the category selected,
 		/// currentCategory).
 		/// </summary>
-		protected PersonsList persons = null;
-		
-		protected Gtk.Menu popup = null;
-		protected void OnNormalizeTextActionActivatedizeTextActionActivated(object sender, EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
+		protected PersonsList persons;
 	}
 }
