@@ -157,7 +157,7 @@ namespace Tacto.Gui
 				this.lblEmptyExplanation.Show();
 			}
 
-			this.lblNumRecords.Text = this.persons.Size().ToString();
+			this.lblNumRecords.Text = this.persons.Size().ToString() + " pax";
 			this.SetStatus();
 			this.UpdateCard();
 			return;
@@ -184,7 +184,13 @@ namespace Tacto.Gui
 			this.Edit( agendaSystem.PersonsList.Find( p ) );
 			this.ActivateGui();
 			this.UpdatePersons();
-			this.SetCurrentPositionInDocument( this.persons.Find( p ), 0 );
+
+			int rowIndex = this.persons.Find( p );
+			if ( rowIndex >= 0 ) {
+				this.SetCurrentPositionInDocument( rowIndex, 1 );
+			}
+
+			return;
 		}
 		
 		private void OnRemove()

@@ -14,49 +14,49 @@ namespace Tacto.Gui {
 			this.actNew = new Gtk.Action( "new", "_New", "New contacts file", Gtk.Stock.New );
 			this.actNew.Activated += (sender, e) => this.OnNew();
 
-			this.actOpen = new Gtk.Action( "open", "Open", "Open contacts file", Gtk.Stock.Open );
+			this.actOpen = new Gtk.Action( "open", "_Open", "Open contacts file", Gtk.Stock.Open );
 			this.actOpen.Activated += (sender, e) => this.OnOpen();
 
-			this.actSave = new Gtk.Action( "save", "Save", "Save contacts file", Gtk.Stock.Save );
+			this.actSave = new Gtk.Action( "save", "_Save", "Save contacts file", Gtk.Stock.Save );
 			this.actSave.Activated += (sender, e) => this.Save();
 
-			this.actAdd = new Gtk.Action( "add", "Add", "Add contact", Gtk.Stock.Add );
+			this.actAdd = new Gtk.Action( "add", "_Add", "Add contact", Gtk.Stock.Add );
 			this.actAdd.Activated += (sender, e) => this.OnAdd();
 
-			this.actModify = new Gtk.Action( "modify", "Modify", "Modify contact", Gtk.Stock.Edit );
+			this.actModify = new Gtk.Action( "modify", "_Modify", "Modify contact", Gtk.Stock.Edit );
 			this.actModify.Activated += (sender, e) => this.OnEdit();
 
-			this.actRemove = new Gtk.Action( "remove", "Remove", "Remove contact", Gtk.Stock.Remove );
+			this.actRemove = new Gtk.Action( "remove", "_Remove", "Remove contact", Gtk.Stock.Remove );
 			this.actRemove.Activated += (sender, e) => this.OnRemove();
 
-			this.actConnect = new Gtk.Action( "connect", "Connect", "Connect", Gtk.Stock.Connect );
+			this.actConnect = new Gtk.Action( "connect", "_Connect", "Connect", Gtk.Stock.Connect );
 			this.actConnect.Activated += (sender, e) => this.OnConnect();
 
-			this.actSettings = new Gtk.Action( "settings", "Settings", "Settings", Gtk.Stock.Preferences );
+			this.actSettings = new Gtk.Action( "settings", "_Settings", "Settings", Gtk.Stock.Preferences );
 			this.actSettings.Activated += (sender, e) => this.OnSettings();
 
-			this.actImport = new Gtk.Action( "import", "Import", "Import", Gtk.Stock.Convert );
+			this.actImport = new Gtk.Action( "import", "_Import", "Import", Gtk.Stock.Convert );
 			this.actImport.Activated += (sender, e) => this.OnImport();
 
-			this.actExport = new Gtk.Action( "export", "Export", "Export", Gtk.Stock.Convert );
+			this.actExport = new Gtk.Action( "export", "_Export", "Export", Gtk.Stock.Convert );
 			this.actExport.Activated += (sender, e) => this.OnExport();
 
-			this.actFind = new Gtk.Action( "find", "Find", "Find", Gtk.Stock.Find );
+			this.actFind = new Gtk.Action( "find", "_Find", "Find", Gtk.Stock.Find );
 			this.actFind.Activated += (sender, e) => this.OnFind();
 
-			this.actFindAgain = new Gtk.Action( "findAgain", "Find again", "Find again", Gtk.Stock.Find );
+			this.actFindAgain = new Gtk.Action( "findAgain", "Find a_gain", "Find again", Gtk.Stock.Find );
 			this.actFindAgain.Activated += (sender, e) => this.OnFindAgain();
 
-			this.actQuit = new Gtk.Action( "quit", "Quit", "Quit", Gtk.Stock.Quit );
+			this.actQuit = new Gtk.Action( "quit", "_Quit", "Quit", Gtk.Stock.Quit );
 			this.actQuit.Activated += (sender, e) => this.Quit();
 
-			this.actViewCard = new Gtk.Action( "view-card", "View card", "View card", null );
+			this.actViewCard = new Gtk.Action( "view-card", "_View card", "View card", null );
 			this.actViewCard.Activated += (sender, e) => this.OnViewCard();
 
-			this.actSort = new Gtk.Action( "sort", "Sort", "Sort", Gtk.Stock.SortAscending );
+			this.actSort = new Gtk.Action( "sort", "_Sort", "Sort", Gtk.Stock.SortAscending );
 			this.actSort.Activated += (sender, e) => this.Sort();
 
-			this.actAbout = new Gtk.Action( "about", "About", "About", Gtk.Stock.About );
+			this.actAbout = new Gtk.Action( "about", "_About", "About", Gtk.Stock.About );
 			this.actAbout.Activated += (sender, e) => this.OnAbout();
 		}
 
@@ -93,39 +93,39 @@ namespace Tacto.Gui {
 
 			// Menu items
 			var opNew = this.actNew.CreateMenuItem();
-			opNew.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opNew.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.n, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opOpen = this.actOpen.CreateMenuItem();
-			opOpen.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opOpen.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.o, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opSave = this.actSave.CreateMenuItem();
-			opSave.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opSave.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.s, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opQuit = this.actQuit.CreateMenuItem();
-			opQuit.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opQuit.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.q, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opAdd = this.actAdd.CreateMenuItem();
-			opAdd.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opAdd.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.plus, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opRemove = this.actRemove.CreateMenuItem();
-			opRemove.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opRemove.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.Delete, Gdk.ModifierType.None, Gtk.AccelFlags.Visible ) );
 
 			var opFind = this.actFind.CreateMenuItem();
-			opFind.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opFind.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.f, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible ) );
 
 			var opFindAgain = this.actFindAgain.CreateMenuItem();
-			opFindAgain.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opFindAgain.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.F3, Gdk.ModifierType.None, Gtk.AccelFlags.Visible ) );
 
 			var opSettings = this.actSettings.CreateMenuItem();
-			opSettings.AddAccelerator( "activated", accelerators, new Gtk.AccelKey(
+			opSettings.AddAccelerator( "activate", accelerators, new Gtk.AccelKey(
 				Gdk.Key.F2, Gdk.ModifierType.None, Gtk.AccelFlags.Visible ) );
 
 			var opView = new Gtk.CheckMenuItem( this.actViewCard.Label );
