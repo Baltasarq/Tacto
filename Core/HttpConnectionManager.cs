@@ -7,6 +7,10 @@ namespace Tacto {
 		public HttpConnectionManager(string url)
 			: base( url )
 		{
+			this.URL = this.URL.Replace( 'º', ' ' )
+							.Replace( 'ª', ' ' )
+							.Replace( '\\', ' ' )
+							.Replace( ',', ' ' );
 		}
 
 		public override void Open()

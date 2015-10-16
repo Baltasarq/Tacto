@@ -27,9 +27,7 @@ namespace Tacto.Gui
 			this.searchRow = 0;
 			this.fileName = "";
 			this.cfgFile = "";
-	//		this.eventbox1.ButtonReleaseEvent += this.OnLblEmail1Clicked;
-	//		this.eventbox2.ButtonReleaseEvent += this.OnLblEmail2Clicked;
-
+	
 			this.New();
 			this.ReadConfiguration();
 			
@@ -668,6 +666,19 @@ namespace Tacto.Gui
 			
 			return;
 		}
+
+		private void OpenMap(String address)
+		{
+			try {
+				// Open message
+				new HttpConnectionManager( HttpConnectionManager.UrlGMapsSearch + address ).Open();
+			} catch(Exception exc)
+			{
+				Util.MsgError( this, AppInfo.Name, exc.Message );
+			}
+
+			return;
+		}
 		
 		private void Sort()
 		{
@@ -859,16 +870,23 @@ namespace Tacto.Gui
 		{
 			this.frmCard.Visible = !this.frmCard.Visible;
 		}
+
+		[GLib.ConnectBefore]
+		private void OnAddressClicked()
+		{
+			this.OpenMap( this.lblAddress.Text );
+			return;
+		}
 		
 		[GLib.ConnectBefore]
-		private void OnLblEmail1Clicked(object o, Gtk.ButtonReleaseEventArgs args)
+		private void OnLblEmail1Clicked()
 		{
 			this.Send( this.lblEmail.Text );
 			return;
 		}
 		
 		[GLib.ConnectBefore]
-		private void OnLblEmail2Clicked(object o, Gtk.ButtonReleaseEventArgs args)
+		private void OnLblEmail2Clicked()
 		{
 			this.Send( this.lblEmail2.Text );
 			return;

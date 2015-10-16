@@ -64,6 +64,7 @@ namespace Tacto.Gui {
 			var swView = new Gtk.ScrolledWindow();
 
 			this.tvTable = new Gtk.TreeView();
+			this.tvTable.EnableSearch = false;
 			this.ttTable = new GtkUtil.TableTextView( this.tvTable, Headers.Count, Headers.Count );
 			this.ttTable.Headers = Headers;
 			this.tvTable.ButtonReleaseEvent += OnTableClick;
@@ -202,6 +203,9 @@ namespace Tacto.Gui {
 		}
 
 		private void BuildCard() {
+			var eventBoxEmail1 = new Gtk.EventBox();
+			var eventBoxEmail2 = new Gtk.EventBox();
+			var eventBoxAddress = new Gtk.EventBox();
 			var vbCardMain = new Gtk.VBox( false, 5 );
 			var hbName = new Gtk.HBox( false, 0 );
 			var hbAddress = new Gtk.HBox( false, 0 );
@@ -221,27 +225,33 @@ namespace Tacto.Gui {
 
 			// Address
 			this.lblAddress = new Gtk.Label( EtqNotAvailable );
+			eventBoxAddress.Add( this.lblAddress );
+			eventBoxAddress.ButtonPressEvent += (o, args) => this.OnAddressClicked();
 			this.lblHomePhone = new Gtk.Label( EtqNotAvailable );
 			vbCardMain.PackStart( hbAddress, false, false, 0 );
-			hbAddress.PackStart( this.lblAddress, false, false, 5 );
+			hbAddress.PackStart( eventBoxAddress, false, false, 5 );
 			hbAddress.PackStart( new Gtk.VSeparator(), false, false, 5 );
 			hbAddress.PackStart( this.lblHomePhone, false, false, 5 );
 
 			// Main contact
 			this.lblMobilePhone = new Gtk.Label( EtqNotAvailable );
 			this.lblEmail = new Gtk.Label( EtqNotAvailable );
+			eventBoxEmail1.Add( this.lblEmail );
+			eventBoxEmail1.ButtonPressEvent += (o, args) => this.OnLblEmail1Clicked();
 			vbCardMain.PackStart( hbMainContact, false, false, 0 );
 			hbMainContact.PackStart( this.lblMobilePhone, false, false, 5 );
 			hbMainContact.PackStart( new Gtk.VSeparator(), false, false, 5 );
-			hbMainContact.PackStart( this.lblEmail, false, false, 5 );
+			hbMainContact.PackStart( eventBoxEmail1, false, false, 5 );
 
 			// Secondary contact
 			this.lblWorkPhone = new Gtk.Label( EtqNotAvailable );
 			this.lblEmail2 = new Gtk.Label( EtqNotAvailable );
+			eventBoxEmail2.Add( this.lblEmail2 );
+			eventBoxEmail2.ButtonPressEvent += (o, args) => this.OnLblEmail2Clicked();
 			vbCardMain.PackStart( hbSecondaryContact, false, false, 0 );
 			hbSecondaryContact.PackStart( this.lblWorkPhone, false, false, 5 );
 			hbSecondaryContact.PackStart( new Gtk.VSeparator(), false, false, 5 );
-			hbSecondaryContact.PackStart( this.lblEmail2, false, false, 5 );
+			hbSecondaryContact.PackStart( eventBoxEmail2, false, false, 5 );
 
 			this.frmCard.Add( vbCardMain );
 			this.vbMain.PackStart( this.frmCard, false, false, 5 );
