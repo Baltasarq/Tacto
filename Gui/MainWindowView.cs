@@ -302,6 +302,14 @@ namespace Tacto.Gui {
 		}
 
 		private void Build() {
+			try {
+				this.Icon = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Tacto.pixmaps.card-file-icon.png", 32, 32 );
+			} catch(System.Exception) {
+				// Ignored
+			}
+
 			this.vbMain = new Gtk.VBox( false, 5 );
 
 			this.BuildStatus();

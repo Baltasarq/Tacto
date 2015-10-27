@@ -52,9 +52,6 @@
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\AssemblyInfo.cs" />
@@ -85,6 +82,7 @@
   <ItemGroup>
     <Folder Include="Core\" />
     <Folder Include="Gui\" />
+    <Folder Include="pixmaps\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -94,6 +92,7 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <None Include="packages.config" />
+    <EmbeddedResource Include="pixmaps\card-file-icon.ico" />
+    <EmbeddedResource Include="pixmaps\card-file-icon.png" />
   </ItemGroup>
 </Project>
