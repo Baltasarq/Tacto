@@ -176,6 +176,7 @@ namespace Tacto.Gui {
 			var hbToolbar = new Gtk.HBox( false, 5 );
 
 			this.tbTool = new Gtk.Toolbar();
+			this.tbTool.ToolbarStyle = Gtk.ToolbarStyle.Icons;
 			this.cbCategory = new Gtk.ComboBox( new string[ 0 ] );
 			this.edSearch = new Gtk.Entry();
 
